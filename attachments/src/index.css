@@ -1,0 +1,383 @@
+/* Google Fonts removed in favor of local variables */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Organic Modernism Palette */
+
+        /* Backgrounds - Deep & Earthy */
+        --background: 30 20% 8%;
+        /* Humus Black-Brown */
+        --foreground: 45 20% 90%;
+        /* Off-white/Bone */
+
+        --card: 140 25% 10%;
+        /* Moss Dark Green */
+        --card-foreground: 45 20% 90%;
+
+        --popover: 140 25% 10%;
+        --popover-foreground: 45 20% 90%;
+
+        --primary: 160 45% 55%;
+        /* Ghost Fungus Green (Muted) */
+        --primary-foreground: 140 25% 10%;
+
+        --secondary: 210 30% 12%;
+        /* Deep Sea Blue */
+        --secondary-foreground: 45 20% 90%;
+
+        --muted: 30 20% 12%;
+        /* Darker Humus */
+        --muted-foreground: 30 10% 60%;
+
+        --accent: 45 65% 50%;
+        /* Slime Mold Orange-Yellow (Muted) */
+        --accent-foreground: 30 20% 8%;
+
+        --destructive: 15 50% 45%;
+        /* Spore Rust Red (Muted) */
+        --destructive-foreground: 45 20% 90%;
+
+        --border: 140 20% 18%;
+        /* Moss Green Border */
+        --input: 140 20% 18%;
+        --ring: 160 45% 55%;
+        /* Ghost Fungus Ring (Muted) */
+
+        --radius: 0.5rem;
+
+        /* Custom Organic Palette (for specific non-shadcn usage) */
+        --organic-moss: 140 25% 10%;
+        --organic-humus: 30 20% 8%;
+        --organic-ghost: 160 85% 75%;
+        --organic-slime: 45 95% 60%;
+        --organic-spore: 15 65% 50%;
+        --organic-abyss: 210 30% 12%;
+
+        /* Lighting & Texture */
+        --structural-line: 140 20% 18%;
+
+        --font-sans: 'Inter', sans-serif;
+        --font-serif: 'Playfair Display', 'Noto Serif SC', serif;
+        --font-mono: 'Space Mono', 'Noto Serif SC', monospace;
+        /* Aurora Mapped to Organic - Muted */
+        --aurora-cyan: 160 45% 55%;
+        /* Ghost Fungus - Reduced brightness */
+        --aurora-magenta: 15 50% 45%;
+        /* Spore Rust - Reduced brightness */
+        --aurora-purple: 210 35% 40%;
+        /* Deep Sea Lighter - Slightly brighter */
+        --aurora-gold: 45 65% 50%;
+        /* Slime Mold - Reduced brightness */
+    }
+
+    .dark {
+        --background: 30 20% 8%;
+        --foreground: 45 20% 90%;
+        --card: 140 25% 10%;
+        --card-foreground: 45 20% 90%;
+        --popover: 140 25% 10%;
+        --popover-foreground: 45 20% 90%;
+        --primary: 160 45% 55%;
+        --primary-foreground: 140 25% 10%;
+        --secondary: 210 30% 12%;
+        --secondary-foreground: 45 20% 90%;
+        --muted: 30 20% 12%;
+        --muted-foreground: 30 10% 60%;
+        --accent: 45 65% 50%;
+        --accent-foreground: 30 20% 8%;
+        --destructive: 15 50% 45%;
+        --destructive-foreground: 45 20% 90%;
+        --border: 140 20% 18%;
+        --input: 140 20% 18%;
+        --ring: 160 45% 55%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased;
+        font-family: var(--font-sans);
+    }
+
+    /* Film Grain Overlay - softened */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.02;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+}
+
+@layer utilities {
+    .font-display {
+        font-family: var(--font-serif);
+    }
+
+    .font-mono {
+        font-family: var(--font-mono);
+    }
+
+    /* Editorial Typography */
+    .text-display-xl {
+        font-family: var(--font-serif);
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 400;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+    }
+
+    .text-display-lg {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 400;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+    }
+
+    .text-label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .text-meta {
+        font-family: var(--font-mono);
+        font-size: 0.625rem;
+        font-weight: 400;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+    }
+
+    /* Structural Grid Lines */
+    .grid-line {
+        border: 1px solid hsl(var(--structural-line));
+    }
+
+    .grid-line-r {
+        border-right: 1px solid hsl(var(--structural-line));
+    }
+
+    .grid-line-b {
+        border-bottom: 1px solid hsl(var(--structural-line));
+    }
+
+    .grid-line-l {
+        border-left: 1px solid hsl(var(--structural-line));
+    }
+
+    .grid-line-t {
+        border-top: 1px solid hsl(var(--structural-line));
+    }
+
+    /* Organic Glow Effects - Softened/Diffused */
+    .glow-cyan {
+        box-shadow: 0 0 60px hsl(var(--primary) / 0.15), 0 0 20px hsl(var(--primary) / 0.1);
+    }
+
+    .glow-magenta {
+        box-shadow: 0 0 60px hsl(var(--destructive) / 0.15), 0 0 20px hsl(var(--destructive) / 0.1);
+    }
+
+    .text-gradient-aurora {
+        background: linear-gradient(135deg,
+                hsl(var(--primary)) 0%,
+                hsl(var(--accent)) 50%,
+                hsl(var(--destructive)) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Pill Button */
+    .btn-pill {
+        @apply px-8 py-3 rounded-full border border-foreground/30 bg-transparent;
+        @apply text-label tracking-widest;
+        @apply transition-all duration-500 ease-out;
+    }
+
+    .btn-pill:hover {
+        @apply bg-foreground text-background;
+        box-shadow: 0 0 25px hsl(var(--aurora-cyan) / 0.5);
+    }
+
+    /* Cell Number Decoration */
+    .cell-number {
+        font-family: var(--font-serif);
+        font-size: 4rem;
+        font-weight: 400;
+        opacity: 0.15;
+        line-height: 1;
+    }
+
+    /* Aurora Gradient Background */
+    .aurora-bg {
+        background:
+            radial-gradient(ellipse 80% 50% at 20% 40%, hsl(var(--aurora-purple) / 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 80% 60%, hsl(var(--aurora-cyan) / 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 50% 30% at 50% 80%, hsl(var(--aurora-magenta) / 0.08) 0%, transparent 50%);
+    }
+
+    /* Animated Aurora */
+    .aurora-animated {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .aurora-animated::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 100% 60% at 30% 50%, hsl(var(--aurora-purple) / 0.2) 0%, transparent 60%),
+            radial-gradient(ellipse 80% 50% at 70% 40%, hsl(var(--aurora-cyan) / 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 50% 70%, hsl(var(--aurora-magenta) / 0.1) 0%, transparent 50%);
+        animation: aurora-drift 20s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes aurora-drift {
+
+        0%,
+        100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+
+        33% {
+            transform: translate(5%, -3%) scale(1.05);
+            opacity: 0.8;
+        }
+
+        66% {
+            transform: translate(-3%, 5%) scale(0.95);
+            opacity: 0.9;
+        }
+    }
+
+    /* Ticker Animation */
+    @keyframes ticker-scroll {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .animate-ticker {
+        animation: ticker-scroll 30s linear infinite;
+    }
+
+    /* Grid Draw Animation */
+    @keyframes grid-draw-h {
+        from {
+            transform: scaleX(0);
+        }
+
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    @keyframes grid-draw-v {
+        from {
+            transform: scaleY(0);
+        }
+
+        to {
+            transform: scaleY(1);
+        }
+    }
+
+    .animate-grid-h {
+        animation: grid-draw-h 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        transform-origin: left;
+    }
+
+    .animate-grid-v {
+        animation: grid-draw-v 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        transform-origin: top;
+    }
+
+    /* Fade Up Animation */
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-up {
+        animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Stagger delays */
+    .delay-100 {
+        animation-delay: 100ms;
+    }
+
+    .delay-200 {
+        animation-delay: 200ms;
+    }
+
+    .delay-300 {
+        animation-delay: 300ms;
+    }
+
+    .delay-400 {
+        animation-delay: 400ms;
+    }
+
+    .delay-500 {
+        animation-delay: 500ms;
+    }
+
+    .delay-600 {
+        animation-delay: 600ms;
+    }
+
+    .delay-700 {
+        animation-delay: 700ms;
+    }
+
+    .delay-800 {
+        animation-delay: 800ms;
+    }
+
+    /* Hover reveal color */
+    .grayscale-hover {
+        filter: grayscale(100%);
+        transition: filter 0.6s ease;
+    }
+
+    .grayscale-hover:hover {
+        filter: grayscale(0%);
+    }
+}
