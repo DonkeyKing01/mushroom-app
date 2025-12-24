@@ -322,103 +322,10 @@ const MapPage = () => {
           </Tabs>
         </aside>
 
-        {/* Map Canvas */}
-        <div
-          className="absolute inset-0 bg-gradient-to-br from-background via-background to-card/50"
-          style={{ cursor: isPublishMode ? "crosshair" : "default" }}
-          onClick={handleMapClick}
-        >
-          {/* Region Polygons with Heatmap */}
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-            {mockRegions.map((region) => {
-              const heatOpacity = region.heat / 100;
-              return (
-                <g key={region.id}>
-                  {/* Region Area (simplified polygon) */}
-                  <circle
-                    cx={region.x}
-                    cy={region.y}
-                    r="8"
-                    fill={layerEnv ? `hsla(var(--aurora-${region.risk === "high" ? "magenta" : region.risk === "medium" ? "gold" : "cyan"}), ${heatOpacity * 0.3})` : "transparent"}
-                    stroke="hsl(var(--aurora-gold))"
-                    strokeWidth="0.2"
-                    className="cursor-pointer hover:fill-opacity-50 transition-all"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRegionClick(region);
-                    }}
-                  />
+        {/* Map Canvas - REMOVED per user request */}
+        <div className="absolute inset-0 bg-background/50" />
 
-                  {/* Region Label */}
-                  <text
-                    x={region.x}
-                    y={region.y - 10}
-                    textAnchor="middle"
-                    className="text-[0.8px] fill-foreground/60 font-mono uppercase tracking-wider pointer-events-none"
-                  >
-                    {region.name}
-                  </text>
-                </g>
-              );
-            })}
 
-            {/* Signal Posts */}
-            {layerSignals && mockPosts.map((post) => (
-              <g key={post.id}>
-                <circle
-                  cx={post.x}
-                  cy={post.y}
-                  r="1.5"
-                  fill="hsl(var(--aurora-cyan))"
-                  className="cursor-pointer animate-pulse"
-                  style={{ animationDuration: "2s" }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePostClick(post);
-                  }}
-                />
-                <circle
-                  cx={post.x}
-                  cy={post.y}
-                  r="2.5"
-                  fill="none"
-                  stroke="hsl(var(--aurora-cyan))"
-                  strokeWidth="0.3"
-                  opacity="0.5"
-                  className="animate-ping"
-                  style={{ animationDuration: "3s" }}
-                />
-              </g>
-            ))}
-          </svg>
-
-          {/* Grid Overlay */}
-          <div className="absolute inset-0 pointer-events-none opacity-10">
-            <div className="w-full h-full grid grid-cols-10 grid-rows-10">
-              {Array.from({ length: 100 }).map((_, i) => (
-                <div key={i} className="border border-foreground/10" />
-              ))}
-            </div>
-          </div>
-
-          {/* Coordinate Label */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-meta text-foreground/30 pointer-events-none">
-            MAP.VIEW.CHINA / Real-time Fungal Distribution Monitor
-          </div>
-        </div>
-
-        {/* FAB - Publish Button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handlePublish}
-          className={`fixed bottom-8 right-8 w-16 h-16 rounded-full flex items-center justify-center z-30 transition-all ${isPublishMode
-            ? "bg-[hsl(var(--aurora-magenta))] rotate-45"
-            : "bg-[hsl(var(--aurora-cyan))] hover:glow-cyan"
-            }`}
-        >
-          <Plus className="w-8 h-8 text-background" />
-        </motion.button>
 
         {/* Post Modal */}
         <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>

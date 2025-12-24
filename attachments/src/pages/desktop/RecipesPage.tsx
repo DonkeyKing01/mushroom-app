@@ -71,7 +71,7 @@ const RecipesPage = () => {
       <main className="pt-16">
         {/* Header */}
         <section className="grid grid-cols-12 grid-line-b">
-          <div className="col-span-12 px-8 py-16">
+          <div className="col-span-12 px-8 py-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ const RecipesPage = () => {
               <span className="text-meta text-foreground/30 block mb-4">
                 04 / AI RECIPES
               </span>
-              <h1 className="text-display-xl font-display mb-4">
+              <h1 className="text-7xl font-display mb-4">
                 AI <span className="text-[hsl(var(--aurora-cyan))]">RECIPES</span>
               </h1>
               <p className="text-label text-foreground/50 max-w-xl">

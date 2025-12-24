@@ -10,7 +10,7 @@ const LabPage = () => {
       <main className="pt-16">
         {/* Header */}
         <section className="grid grid-cols-12 grid-line-b">
-          <div className="col-span-8 grid-line-r px-8 py-16">
+          <div className="col-span-8 grid-line-r px-8 py-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -19,7 +19,7 @@ const LabPage = () => {
               <span className="text-meta text-foreground/30 block mb-4">
                 03 / LABORATORY
               </span>
-              <h1 className="text-display-xl font-display mb-4">
+              <h1 className="text-7xl font-display mb-4">
                 INTERACTIVE <span className="text-[hsl(var(--aurora-cyan))]">LAB</span>
               </h1>
               <p className="text-label text-foreground/50 max-w-xl">
@@ -27,7 +27,7 @@ const LabPage = () => {
               </p>
             </motion.div>
           </div>
-          <div className="col-span-4 px-8 py-16 flex flex-col justify-center">
+          <div className="col-span-4 px-8 py-10 flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-2 h-2 rounded-full bg-[hsl(var(--aurora-cyan))] animate-pulse" />
               <span className="text-label text-foreground/50">Online Users</span>

@@ -9,7 +9,7 @@ const NewsPage = () => {
             <Navigation />
             <main className="pt-24 pb-16">
                 <section className="grid-line-b mb-12">
-                    <div className="max-w-[1440px] mx-auto px-8 pb-12">
+                    <div className="max-w-[1440px] mx-auto px-8 pb-8">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -18,7 +18,7 @@ const NewsPage = () => {
                             <span className="text-meta text-foreground/30 block mb-4">
                                 05 / NEWS
                             </span>
-                            <h1 className="text-display-xl font-display mb-6">
+                            <h1 className="text-7xl font-display mb-6">
                                 MYCO <span className="text-[hsl(var(--aurora-cyan))]">NEWS</span>
                             </h1>
                             <p className="text-label text-foreground/50 max-w-xl">
