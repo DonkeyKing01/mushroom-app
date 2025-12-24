@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -14,25 +14,52 @@ import {
   Radio,
   Circle,
 } from "lucide-react";
+import FungalMap from "@/components/desktop/FungalMap";
 import Navigation from "@/components/desktop/Navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 // Mock data
+// Consolidated mock data and interfaces
+interface Node {
+  id: number;
+  x: number;
+  y: number; // percentage 0-100
+  type: 'colony' | 'spore' | 'user';
+  size: number;
+  nourishment: number;
+  author: string;
+  species: string;
+  pulseOffset: number;
+  location: { lat: number; lng: number };
+}
+
+interface Pulse {
+  targetX: number;
+  targetY: number;
+  progress: number;
+}
+
+const MOCK_MESSAGES = [
+  "Found a huge colony here!",
+  "Is this edible?",
+  "Beautiful bioluminescence.",
+  "Spores spreading fast.",
+  "Need identification help.",
+  "Conditions optimal.",
+  "Verified observation.",
+  "Connecting hyphae...",
+  "Amazing texture.",
+  "Habitat confirmed."
+];
+
 const mockRegions = [
   { id: "yunnan", name: "Yunnan", x: 30, y: 60, heat: 95, posts: 127, humidity: 85, temp: 22, risk: "high" },
   { id: "sichuan", name: "Sichuan", x: 45, y: 45, heat: 78, posts: 89, humidity: 75, temp: 18, risk: "medium" },
   { id: "guizhou", name: "Guizhou", x: 38, y: 55, heat: 62, posts: 54, humidity: 80, temp: 20, risk: "medium" },
   { id: "guangxi", name: "Guangxi", x: 42, y: 72, heat: 45, posts: 31, humidity: 70, temp: 25, risk: "low" },
   { id: "tibet", name: "Tibet", x: 15, y: 35, heat: 12, posts: 8, humidity: 40, temp: 12, risk: "low" },
-];
-
-const mockPosts = [
-  { id: 1, region: "yunnan", x: 32, y: 58, author: "Fungi Hunter", content: "Found lots of Lanmaoa asiatica, Location: Kunming Xishan", species: "Lanmaoa asiatica", time: "2h ago", avatar: "🍄" },
-  { id: 2, region: "yunnan", x: 28, y: 62, author: "Mycologist", content: "Attention! Large appearance of fungi after rain this week", species: null, time: "5h ago", avatar: "🔬" },
-  { id: 3, region: "sichuan", x: 46, y: 43, author: "Master Picker", content: "Rare Blue Puffball found at Mount Emei", species: "Puffball", time: "1d ago", avatar: "🌟" },
-  { id: 4, region: "sichuan", x: 44, y: 47, author: "Explorer", content: "Matsutake season begins", species: "Matsutake", time: "2d ago", avatar: "🏔️" },
 ];
 
 const mockTopRegions = [
@@ -51,46 +78,53 @@ const mockTopSpecies = [
   { rank: 5, name: "Morel", count: 128, risk: "Safe" },
 ];
 
-const mockActiveUsers = [
-  { id: 1, name: "Fungi Hunter", posts: 47, status: "online", lastSeen: "Just now" },
-  { id: 2, name: "Mycologist", posts: 32, status: "online", lastSeen: "5m ago" },
-  { id: 3, name: "Master Picker", posts: 28, status: "offline", lastSeen: "1h ago" },
-  { id: 4, name: "Explorer", posts: 19, status: "online", lastSeen: "Just now" },
-];
-
 const MapPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [layerEnv, setLayerEnv] = useState(true);
   const [layerSpecies, setLayerSpecies] = useState(true);
   const [layerSignals, setLayerSignals] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState(mockRegions[0]);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
-  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-  const [isPublishMode, setIsPublishMode] = useState(false);
+
+  // FungalMap State Lifted
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [status, setStatus] = useState("Monitoring Network");
+  const [comments, setComments] = useState<Record<number, { author: string; text: string }[]>>({});
+  const [userConnections, setUserConnections] = useState<Set<number>>(new Set());
+  const [nourishPulses, setNourishPulses] = useState<Pulse[]>([]);
+  const [replyMode, setReplyMode] = useState(false);
+
+  // Initial Data Generation (Copied from FungalMap)
+  useEffect(() => {
+    const initialNodes: Node[] = Array.from({ length: 80 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 90 + 5,
+      y: Math.random() * 80 + 10,
+      type: Math.random() > 0.8 ? 'colony' : 'spore',
+      size: Math.random() * 4 + 3,
+      nourishment: Math.floor(Math.random() * 10),
+      author: `Observer_${Math.floor(Math.random() * 1000)}`,
+      species: ['Amanita', 'Mycena', 'Cantharellus', 'Russula'][Math.floor(Math.random() * 4)],
+      pulseOffset: Math.random() * Math.PI * 2,
+      location: { lat: 34 + Math.random(), lng: -118 + Math.random() }
+    }));
+    setNodes(initialNodes);
+
+    const initialComments: Record<number, { author: string; text: string }[]> = {};
+    initialNodes.forEach(n => {
+      if (Math.random() > 0.7) {
+        initialComments[n.id] = [{
+          author: `User_${Math.floor(Math.random() * 100)}`,
+          text: MOCK_MESSAGES[Math.floor(Math.random() * MOCK_MESSAGES.length)]
+        }];
+      }
+    });
+    setComments(initialComments);
+  }, []);
 
   const handleRegionClick = (region: any) => {
     setSelectedRegion(region);
     toast.success(`Focused on ${region.name}`);
-  };
-
-  const handlePostClick = (post: any) => {
-    setSelectedPost(post);
-    setIsPostModalOpen(true);
-  };
-
-  const handlePublish = () => {
-    setIsPublishMode(true);
-    toast.info("Click anywhere on map to publish");
-  };
-
-  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isPublishMode) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      toast.success(`Flag planted at (${x.toFixed(1)}, ${y.toFixed(1)})`);
-      setIsPublishMode(false);
-    }
   };
 
   return (
@@ -206,7 +240,7 @@ const MapPage = () => {
           </div>
         </aside>
 
-        {/* Right Sidebar - Rankings & Users */}
+        {/* Right Sidebar - Rankings & Monitoring */}
         <aside className="absolute right-0 top-16 bottom-0 w-80 bg-background/80 backdrop-blur-md grid-line-l z-20 overflow-y-auto">
           <Tabs defaultValue="hot" className="h-full">
             <TabsList className="w-full grid grid-cols-2 bg-card/50 p-1 m-4">
@@ -289,30 +323,31 @@ const MapPage = () => {
             </TabsContent>
 
             <TabsContent value="users" className="px-6 pb-6 mt-0">
-              <h3 className="text-meta text-foreground/40 mb-3 flex items-center gap-2">
-                <Users className="w-3 h-3" />
-                Active Users Nearby
-              </h3>
+              {/* Network Monitoring List (Moved from FungalMap left panel) */}
+              <div className="p-4 border-b border-border mb-4">
+                <div className="flex items-center gap-2 text-[hsl(var(--aurora-cyan))] text-xs tracking-widest mb-2 font-mono uppercase">
+                  <div className="w-2 h-2 bg-current rounded-full shadow-[0_0_10px_currentColor]" />
+                  {status}
+                </div>
+                <h2 className="text-xl font-display text-foreground">Network Activity</h2>
+              </div>
+
               <div className="space-y-2">
-                {mockActiveUsers.map((user) => (
+                {nodes.slice(-10).reverse().map((node) => (
                   <button
-                    key={user.id}
+                    key={node.id}
+                    onClick={() => setSelectedNode(node)}
                     className="w-full p-3 bg-card hover:bg-card/70 grid-line flex items-center gap-3 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[hsl(var(--aurora-purple)/0.2)] flex items-center justify-center text-lg">
-                      {user.name[0]}
-                    </div>
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${node.nourishment > 5 ? 'bg-[hsl(var(--aurora-magenta))]' : 'bg-[hsl(var(--aurora-cyan))]'}`} />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-label text-foreground">
-                          {user.name}
+                          {node.author}
                         </span>
-                        {user.status === "online" && (
-                          <Circle className="w-2 h-2 fill-[hsl(var(--aurora-cyan))] text-[hsl(var(--aurora-cyan))]" />
-                        )}
                       </div>
                       <span className="text-meta text-foreground/40">
-                        {user.posts} Contributions · {user.lastSeen}
+                        found {node.species}
                       </span>
                     </div>
                   </button>
@@ -322,53 +357,24 @@ const MapPage = () => {
           </Tabs>
         </aside>
 
-        {/* Map Canvas - REMOVED per user request */}
-        <div className="absolute inset-0 bg-background/50" />
-
-
-
-        {/* Post Modal */}
-        <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
-          <DialogContent className="bg-background/95 backdrop-blur-md border-border max-w-2xl">
-            {selectedPost && (
-              <div className="p-6">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-[hsl(var(--aurora-purple)/0.2)] flex items-center justify-center text-2xl">
-                    {selectedPost.avatar}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="text-label text-foreground">
-                        {selectedPost.author}
-                      </span>
-                      <span className="text-meta text-foreground/30">
-                        {selectedPost.time}
-                      </span>
-                    </div>
-                    <span className="text-meta text-foreground/40">
-                      {selectedPost.region} ·
-                      {selectedPost.species && ` #${selectedPost.species}`}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-label text-foreground/80 leading-relaxed mb-6">
-                  {selectedPost.content}
-                </p>
-
-                {/* Mock Image */}
-                <div className="aspect-video bg-card grid-line mb-4 flex items-center justify-center">
-                  <MapPin className="w-12 h-12 text-foreground/10" />
-                </div>
-
-                <div className="flex items-center justify-between text-meta text-foreground/40">
-                  <span>Coords: {selectedPost.x.toFixed(2)}, {selectedPost.y.toFixed(2)}</span>
-                  <span>27 Likes · 8 Comments</span>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Center Canvas: FungalMap */}
+        <div className="absolute top-16 bottom-0 left-80 right-80 bg-background/50 border-x border-border">
+          <FungalMap
+            nodes={nodes}
+            setNodes={setNodes}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
+            comments={comments}
+            setComments={setComments}
+            userConnections={userConnections}
+            setUserConnections={setUserConnections}
+            nourishPulses={nourishPulses}
+            setNourishPulses={setNourishPulses}
+            setStatus={setStatus}
+            replyMode={replyMode}
+            setReplyMode={setReplyMode}
+          />
+        </div>
       </div>
     </div>
   );
