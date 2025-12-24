@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Archive, Map, FlaskConical, BookOpen, Users } from "lucide-react";
+import { Archive, Map, FlaskConical, BookOpen, Newspaper } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface FeatureCell {
@@ -33,8 +33,8 @@ const features: FeatureCell[] = [
     description: "Real-time visualization of global fungal distribution",
     icon: <Map className="w-6 h-6" />,
     path: "/map",
-    size: "large",
-    accent: "aurora-magenta",
+    size: "medium",
+    accent: "aurora-cyan",
     stats: { label: "MARKERS", value: "28,391" },
   },
   {
@@ -44,8 +44,8 @@ const features: FeatureCell[] = [
     description: "Mycelium growth simulation and data visualization",
     icon: <FlaskConical className="w-6 h-6" />,
     path: "/lab",
-    size: "medium",
-    accent: "aurora-purple",
+    size: "large",
+    accent: "aurora-cyan",
     stats: { label: "ONLINE", value: "127" },
   },
   {
@@ -55,20 +55,20 @@ const features: FeatureCell[] = [
     description: "Safe consumption guide and culinary inspiration",
     icon: <BookOpen className="w-6 h-6" />,
     path: "/recipes",
-    size: "small",
-    accent: "aurora-gold",
+    size: "medium",
+    accent: "aurora-cyan",
     stats: { label: "RECIPES", value: "842" },
   },
   {
     index: "05",
-    title: "COMMUNITY",
-    titleEn: "COMMUNITY",
-    description: "Connect with fungal enthusiasts worldwide",
-    icon: <Users className="w-6 h-6" />,
-    path: "/map",
-    size: "small",
+    title: "NEWS",
+    titleEn: "NEWS",
+    description: "Latest discoveries and community updates",
+    icon: <Newspaper className="w-6 h-6" />,
+    path: "/news",
+    size: "medium",
     accent: "aurora-cyan",
-    stats: { label: "MEMBERS", value: "3,291" },
+    stats: { label: "ARTICLES", value: "Latest" },
   },
 ];
 
@@ -117,37 +117,37 @@ const FeatureGrid = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-12 grid-rows-2 min-h-[500px]"
+        className="grid grid-cols-1 lg:grid-cols-3 min-h-[600px]"
       >
-        {/* Cell 1: Archive (Medium - 4 cols) */}
-        <motion.div variants={cellVariants} className="col-span-4 row-span-1 grid-line-r grid-line-b">
-          <FeatureCard feature={features[0]} />
+        {/* Left Column (Archive, Map) */}
+        <div className="flex flex-col border-r border-border/40">
+          {/* Cell 1: Archive */}
+          <motion.div variants={cellVariants} className="flex-1 border-b border-border/40">
+            <FeatureCard feature={features[0]} />
+          </motion.div>
+          {/* Cell 2: Map */}
+          <motion.div variants={cellVariants} className="flex-1">
+            <FeatureCard feature={features[1]} />
+          </motion.div>
+        </div>
+
+        {/* Center Column (Lab) */}
+        <motion.div variants={cellVariants} className="border-r border-border/40">
+          {/* Cell 3: Lab (Full Height) */}
+          <FeatureCard feature={features[2]} isLarge />
         </motion.div>
 
-        {/* Cell 2: Map (Large - 4 cols, 2 rows) */}
-        <motion.div variants={cellVariants} className="col-span-4 row-span-2 grid-line-r">
-          <FeatureCard feature={features[1]} isLarge />
-        </motion.div>
-
-        {/* Cell 3: Lab (Medium - 4 cols) */}
-        <motion.div variants={cellVariants} className="col-span-4 row-span-1 grid-line-b">
-          <FeatureCard feature={features[2]} />
-        </motion.div>
-
-        {/* Cell 4: Recipes (Small - 2 cols) */}
-        <motion.div variants={cellVariants} className="col-span-2 row-span-1 grid-line-r">
-          <FeatureCard feature={features[3]} isCompact />
-        </motion.div>
-
-        {/* Cell 5: Community (Small - 2 cols) */}
-        <motion.div variants={cellVariants} className="col-span-2 row-span-1 grid-line-r">
-          <FeatureCard feature={features[4]} isCompact />
-        </motion.div>
-
-        {/* Cell 6: Recipes continued (4 cols) */}
-        <motion.div variants={cellVariants} className="col-span-4 row-span-1">
-          <FeatureCard feature={features[3]} showDescription />
-        </motion.div>
+        {/* Right Column (Recipes, News) */}
+        <div className="flex flex-col">
+          {/* Cell 4: Recipes */}
+          <motion.div variants={cellVariants} className="flex-1 border-b border-border/40">
+            <FeatureCard feature={features[3]} />
+          </motion.div>
+          {/* Cell 5: News */}
+          <motion.div variants={cellVariants} className="flex-1">
+            <FeatureCard feature={features[4]} />
+          </motion.div>
+        </div>
       </motion.div>
     </section>
   );
@@ -156,29 +156,27 @@ const FeatureGrid = () => {
 interface FeatureCardProps {
   feature: FeatureCell;
   isLarge?: boolean;
-  isCompact?: boolean;
-  showDescription?: boolean;
 }
 
-const FeatureCard = ({ feature, isLarge, isCompact, showDescription }: FeatureCardProps) => {
+const FeatureCard = ({ feature, isLarge }: FeatureCardProps) => {
   const accentColor = `hsl(var(--${feature.accent}))`;
 
   return (
     <Link
       to={feature.path}
-      className="group relative h-full flex flex-col p-6 transition-colors duration-500 hover:bg-card"
+      className="group relative h-full flex flex-col p-8 transition-colors duration-500 hover:bg-card"
     >
       {/* Decorative Index */}
       <span
-        className="cell-number absolute top-4 right-4 transition-opacity duration-500 group-hover:opacity-30"
-        style={{ color: accentColor }}
+        className="cell-number absolute top-6 right-6 transition-opacity duration-500 group-hover:opacity-100 opacity-60 text-4xl font-display"
+        style={{ color: isLarge ? accentColor : 'currentColor' }}
       >
         {feature.index}
       </span>
 
       {/* Icon */}
       <div
-        className="mb-4 transition-transform duration-500 group-hover:translate-x-1"
+        className="mb-6 transition-transform duration-500 group-hover:translate-x-1"
         style={{ color: accentColor }}
       >
         {feature.icon}
@@ -186,33 +184,30 @@ const FeatureCard = ({ feature, isLarge, isCompact, showDescription }: FeatureCa
 
       {/* Content */}
       <div className="mt-auto">
-        {!isCompact && (
-          <span className="text-meta text-foreground/30 block mb-1">
-            {feature.titleEn}
-          </span>
-        )}
-        <h3 className={`font-display ${isLarge ? 'text-display-lg' : 'text-2xl'} text-foreground mb-2`}>
+        <span className="text-meta text-foreground/30 block mb-2">
+          {feature.titleEn}
+        </span>
+        <h3 className={`font-display ${isLarge ? 'text-display-lg' : 'text-3xl'} text-foreground mb-3`}>
           {feature.title}
         </h3>
-        {(isLarge || showDescription) && (
-          <p className="text-label text-foreground/40 leading-relaxed max-w-xs">
-            {feature.description}
-          </p>
+
+        <p className={`text-label text-foreground/40 leading-relaxed max-w-xs ${isLarge ? 'block' : 'hidden md:block'}`}>
+          {feature.description}
+        </p>
+
+        {/* Stats */}
+        {feature.stats && (
+          <div className={`mt-8 pt-4 border-t border-border/10 ${isLarge ? 'block' : 'block'}`}>
+            <span className="text-meta text-foreground/30">{feature.stats.label}</span>
+            <span
+              className="block text-2xl font-display mt-1"
+              style={{ color: accentColor }}
+            >
+              {feature.stats.value}
+            </span>
+          </div>
         )}
       </div>
-
-      {/* Stats */}
-      {feature.stats && !isCompact && (
-        <div className="mt-6 pt-4 grid-line-t">
-          <span className="text-meta text-foreground/30">{feature.stats.label}</span>
-          <span
-            className="block text-2xl font-display mt-1"
-            style={{ color: accentColor }}
-          >
-            {feature.stats.value}
-          </span>
-        </div>
-      )}
 
       {/* Hover Indicator */}
       <div

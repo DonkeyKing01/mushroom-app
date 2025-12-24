@@ -30,15 +30,19 @@ const MyceliumScene = () => {
       >
         <Suspense fallback={null}>
           <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={75} />
-          
+
           {/* Ambient aurora glow */}
-          <ambientLight intensity={0.3} color="#00ffc2" />
-          <pointLight position={[5, 5, 5]} intensity={0.5} color="#ff2e93" />
-          <pointLight position={[-5, -5, 5]} intensity={0.5} color="#5d3fd3" />
-          
+          {/* Warm, organic lighting */}
+          <ambientLight intensity={0.2} color="#8B4513" />
+          <pointLight position={[5, 10, 5]} intensity={0.8} color="#CD853F" />
+          <pointLight position={[-5, 5, 5]} intensity={0.6} color="#D2691E" />
+          <pointLight position={[0, -5, 8]} intensity={0.4} color="#A0522D" />
+
           {/* Mycelium particle network */}
-          <MyceliumParticles count={2000} mousePosition={mousePosition} />
-          
+          <group position={[0, -2.5, 0]} scale={1.4}>
+            <MyceliumParticles count={6000} mousePosition={mousePosition} />
+          </group>
+
           {/* Interactive controls (optional, can be removed for production) */}
           <OrbitControls
             enableZoom={false}

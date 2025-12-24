@@ -133,7 +133,7 @@ const HeroSection = () => {
             transition={{ duration: 1, delay: 0.6 }}
             className="absolute bottom-8 right-8 font-display text-[12rem] font-light italic leading-none select-none pointer-events-none"
           >
-            01
+            00
           </motion.span>
         </div>
       </div>

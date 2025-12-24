@@ -7,6 +7,7 @@ const navItems = [
   { path: "/map", label: "MAP", index: "02" },
   { path: "/lab", label: "LAB", index: "03" },
   { path: "/recipes", label: "RECIPES", index: "04" },
+  { path: "/news", label: "NEWS", index: "05" },
 ];
 
 const Navigation = () => {
