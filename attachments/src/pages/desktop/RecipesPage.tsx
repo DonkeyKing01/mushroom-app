@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Plus, Trash2, ChefHat, Sparkles, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useDrag, useDrop } from "@use-gesture/react";
+import { useDrag } from "@use-gesture/react";
 import Navigation from "@/components/desktop/Navigation";
 import Footer from "@/components/desktop/Footer";
 import SteamScene from "@/components/desktop/SteamScene";
@@ -22,7 +22,8 @@ const RecipesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useState<any[]>([]);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  // const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const isDraggingOver = false; // Placeholder for now
   const navigate = useNavigate();
 
   const filteredSpecies = mockEdibleSpecies.filter(s =>
@@ -125,10 +126,7 @@ const RecipesPage = () => {
 
         {/* Interactive Cooking Area */}
         <section className="relative min-h-[70vh] grid grid-cols-12">
-          {/* Steam Background */}
-          <div className="absolute inset-0 col-span-12 opacity-60">
-            <SteamScene />
-          </div>
+
 
           {/* Left: Selected Ingredients */}
           <div className="relative col-span-4 grid-line-r p-8 z-10 bg-background/40 backdrop-blur-sm">
@@ -242,7 +240,7 @@ const DraggableSpeciesCard = ({ species, onDropOnPot, isSelected }: DraggableSpe
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const bind = useDrag((state) => {
-    setIsDragging(state.dragging);
+    setIsDragging(!!state.dragging);
     if (state.dragging) {
       setPosition({ x: state.offset[0], y: state.offset[1] });
     } else if (state.tap === false) {
@@ -270,7 +268,7 @@ const DraggableSpeciesCard = ({ species, onDropOnPot, isSelected }: DraggableSpe
 
   return (
     <motion.div
-      {...bind()}
+      {...(bind() as any)}
       style={{
         x: position.x,
         y: position.y,
@@ -318,6 +316,10 @@ const DigitalPot = ({ ripples, ingredientCount, isDraggingOver }: DigitalPotProp
       >
         {/* Pot Visualization */}
         <div className="relative w-[500px] h-[500px]">
+          {/* Steam Background - Now strictly relative to Pot circle */}
+          <div className="absolute inset-0 opacity-60 pointer-events-none z-[-1]">
+            <SteamScene />
+          </div>
           {/* Outer Circle - Pot Rim */}
           <motion.div
             animate={{ scale: isDraggingOver ? 1.05 : 1 }}

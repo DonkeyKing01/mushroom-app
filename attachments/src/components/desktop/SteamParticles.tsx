@@ -32,11 +32,11 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
-      
+
       // Spawn particles from pot center
       const angle = Math.random() * Math.PI * 2;
       const radius = Math.random() * 1.5;
-      
+
       positions[i3] = Math.cos(angle) * radius;
       positions[i3 + 1] = -2; // Start below
       positions[i3 + 2] = Math.sin(angle) * radius;
@@ -72,17 +72,18 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
 
       // Reset particle if too old
       if (ages[i] > maxAge[i]) {
+        // Spawn particles from pot center (concentrated)
         const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 1.5;
-        
+        const radius = Math.random() * 0.8; // Reduced from 1.5
+
         positions[i3] = Math.cos(angle) * radius;
-        positions[i3 + 1] = -2;
+        positions[i3 + 1] = -1.2; // Start closer to center
         positions[i3 + 2] = Math.sin(angle) * radius;
-        
+
         velocities[i3] = (Math.random() - 0.5) * 0.02;
         velocities[i3 + 1] = 0.02 + Math.random() * 0.03;
         velocities[i3 + 2] = (Math.random() - 0.5) * 0.02;
-        
+
         ages[i] = 0;
         maxAge[i] = 50 + Math.random() * 50;
       }

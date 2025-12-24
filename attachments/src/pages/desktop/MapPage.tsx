@@ -1,22 +1,15 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Search,
   Layers,
-  MapPin,
-  Users,
   TrendingUp,
-  Plus,
-  X,
   Thermometer,
   Droplets,
   AlertTriangle,
-  Radio,
-  Circle,
 } from "lucide-react";
 import FungalMap from "@/components/desktop/FungalMap";
 import Navigation from "@/components/desktop/Navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 

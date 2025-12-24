@@ -70,13 +70,9 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
         // The original code filled with #151515. 
         // Let's assume we want trails, so we might need to handle the clearing logic in the loop.
 
-        // Actually, the original code filled background ONCE in init, then just drew lines on top.
-        // It didn't clearRect every frame. This creates permanent trails.
-        // We should replicate that behavior. 
-        // To support "Reset", we rely on the component being unmounted/remounted or a specific reset command.
-
-        ctx.fillStyle = '#151515';
-        ctx.fillRect(0, 0, canvas.width, canvas.height); // Initial fill
+        // Initial clear to be sure
+        // The parent container provides the background gradient, so we keep canvas transparent.
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (hyphaeRef.current.length === 0) {
             initSim(canvas);
@@ -165,7 +161,6 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
             ref={canvasRef}
             className="w-full h-full block"
             style={{
-                background: '#0a0a0b', // fallback bg
                 mixBlendMode: 'screen' // Allows blending if we have a cool background
             }}
         />
