@@ -6,31 +6,34 @@ import { useDrag } from "@use-gesture/react";
 import Navigation from "@/components/desktop/Navigation";
 import Footer from "@/components/desktop/Footer";
 import SteamScene from "@/components/desktop/SteamScene";
+import { useSpeciesList, SpeciesData } from "@/hooks/useSpecies";
 import { toast } from "sonner";
 
-// Mock edible species data
-const mockEdibleSpecies = [
-  { id: "1", name_cn: "Lanmaoa asiatica", name_scientific: "Boletus yunnanensis", imageUrl: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&auto=format" },
-  { id: "3", name_cn: "Chanterelle", name_scientific: "Cantharellus cibarius", imageUrl: "https://images.unsplash.com/photo-1504545102780-26774c1bb073?w=400&auto=format" },
-  { id: "4", name_cn: "Matsutake", name_scientific: "Tricholoma matsutake", imageUrl: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&auto=format" },
-  { id: "7", name_cn: "Morel", name_scientific: "Morchella esculenta", imageUrl: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&auto=format" },
-  { id: "11", name_cn: "Porcini", name_scientific: "Boletus edulis", imageUrl: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&auto=format" },
-  { id: "12", name_cn: "Bamboo Fungus", name_scientific: "Phallus indusiatus", imageUrl: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&auto=format" },
-];
+// Mock data removed in favor of useSpeciesList hook
 
 const RecipesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSpecies, setSelectedSpecies] = useState<any[]>([]);
+  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesData[]>([]);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
-  // const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const isDraggingOver = false; // Placeholder for now
+  const isDraggingOver = false;
   const navigate = useNavigate();
 
-  const filteredSpecies = mockEdibleSpecies.filter(s =>
-    s.name_cn.includes(searchQuery) || s.name_scientific.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Fetch species from the archive
+  // If searching, fetch all types to check for toxic matches
+  const { data: speciesList = [] } = useSpeciesList({
+    edibility: searchQuery ? "all" : "edible",
+    search: searchQuery
+  });
 
-  const handleDropOnPot = (species: any, x: number, y: number) => {
+  // If not searching, we only show already edible ones
+  // If searching, we show all results but use the 'edibility' field to filter interactions
+  const filteredSpecies = speciesList;
+
+  const handleDropOnPot = (species: SpeciesData, x: number, y: number) => {
+    if (species.edibility !== "edible") {
+      toast.error(`Warning: ${species.name_cn} is ${species.edibility} and cannot be used in recipes.`);
+      return;
+    }
     if (selectedSpecies.find(s => s.id === species.id)) {
       toast.error("Ingredient already added");
       return;
@@ -162,7 +165,7 @@ const RecipesPage = () => {
                       className="p-4 bg-card/80 backdrop-blur-sm grid-line flex items-center gap-3 group"
                     >
                       <img
-                        src={species.imageUrl}
+                        src={species.images[0]?.image_url}
                         alt={species.name_cn}
                         className="w-12 h-12 object-cover grid-line"
                       />
@@ -230,8 +233,8 @@ const RecipesPage = () => {
 };
 
 interface DraggableSpeciesCardProps {
-  species: any;
-  onDropOnPot: (species: any, x: number, y: number) => void;
+  species: SpeciesData;
+  onDropOnPot: (species: SpeciesData, x: number, y: number) => void;
   isSelected: boolean;
 }
 
@@ -281,14 +284,26 @@ const DraggableSpeciesCard = ({ species, onDropOnPot, isSelected }: DraggableSpe
         <div className={`aspect-square bg-card grid-line mb-2 overflow-hidden relative group ${isSelected ? "opacity-50" : ""
           }`}>
           <img
-            src={species.imageUrl}
+            src={species.images[0]?.image_url}
             alt={species.name_cn}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+            className={`w-full h-full object-cover transition-all duration-300 ${species.edibility !== "edible" ? "contrast-125" : ""}`}
           />
-          {!isSelected && (
-            <div className="absolute inset-0 bg-background/0 group-hover:bg-[hsl(var(--aurora-cyan)/0.1)] transition-colors flex items-center justify-center">
-              <Plus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          {species.edibility !== "edible" ? (
+            <div className="absolute inset-0 bg-[hsl(var(--aurora-magenta)/0.2)] backdrop-blur-[2px] flex flex-col items-center justify-center p-2 text-center">
+              <AlertTriangle className="w-6 h-6 text-[hsl(var(--aurora-magenta))] mb-1" />
+              <span className="text-[10px] font-bold text-[hsl(var(--aurora-magenta))] uppercase tracking-tighter leading-none">
+                {species.edibility}
+              </span>
+              <span className="text-[8px] text-[hsl(var(--aurora-magenta))/0.8] uppercase mt-1">
+                NOT FOR POT
+              </span>
             </div>
+          ) : (
+            !isSelected && (
+              <div className="absolute inset-0 bg-background/0 group-hover:bg-[hsl(var(--aurora-cyan)/0.1)] transition-colors flex items-center justify-center">
+                <Plus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            )
           )}
         </div>
         <span className="text-meta text-foreground/60 block text-center">
