@@ -5,9 +5,10 @@ import * as THREE from "three";
 
 interface SteamParticlesProps {
   count?: number;
+  intensity?: number; // 0 to 1
 }
 
-const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
+const SteamParticles = ({ count = 500, intensity = 0 }: SteamParticlesProps) => {
   const points = useRef<THREE.Points>(null);
   const particlesRef = useRef<{
     positions: Float32Array;
@@ -15,6 +16,10 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
     ages: Float32Array;
     maxAge: Float32Array;
   }>();
+
+  // Keep track of intensity ref for use in animation loop without re-running effects
+  const intensityRef = useRef(intensity);
+  intensityRef.current = intensity;
 
   const { positions, colors } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -65,6 +70,7 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
 
     const { positions, velocities, ages, maxAge } = particlesRef.current;
     const positionAttribute = points.current.geometry.attributes.position;
+    const currentIntensity = intensityRef.current;
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
@@ -74,22 +80,24 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
       if (ages[i] > maxAge[i]) {
         // Spawn particles from pot center (concentrated)
         const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 0.8; // Reduced from 1.5
+        // Radius increases with intensity
+        const radius = Math.random() * (0.8 + currentIntensity * 0.5);
 
         positions[i3] = Math.cos(angle) * radius;
         positions[i3 + 1] = -1.2; // Start closer to center
         positions[i3 + 2] = Math.sin(angle) * radius;
 
-        velocities[i3] = (Math.random() - 0.5) * 0.02;
-        velocities[i3 + 1] = 0.02 + Math.random() * 0.03;
-        velocities[i3 + 2] = (Math.random() - 0.5) * 0.02;
+        // Increased velocity with intensity
+        velocities[i3] = (Math.random() - 0.5) * (0.02 + currentIntensity * 0.02);
+        velocities[i3 + 1] = 0.02 + Math.random() * 0.03 + (currentIntensity * 0.05);
+        velocities[i3 + 2] = (Math.random() - 0.5) * (0.02 + currentIntensity * 0.02);
 
         ages[i] = 0;
         maxAge[i] = 50 + Math.random() * 50;
       }
 
       // Apply turbulence
-      const turbulence = Math.sin(ages[i] * 0.1) * 0.005;
+      const turbulence = Math.sin(ages[i] * 0.1) * (0.005 + currentIntensity * 0.005);
       velocities[i3] += (Math.random() - 0.5) * turbulence;
       velocities[i3 + 2] += (Math.random() - 0.5) * turbulence;
 
@@ -109,11 +117,11 @@ const SteamParticles = ({ count = 500 }: SteamParticlesProps) => {
       <PointMaterial
         transparent
         vertexColors
-        size={0.15}
+        size={0.15 + intensity * 0.15} // Scale size with intensity
         sizeAttenuation={true}
         depthWrite={false}
         blending={THREE.AdditiveBlending}
-        opacity={0.4}
+        opacity={0.4 + intensity * 0.2}
       />
       <bufferAttribute
         attach="geometry-attributes-color"

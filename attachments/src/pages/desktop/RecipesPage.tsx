@@ -381,7 +381,7 @@ const DigitalPot = ({ ripples, ingredientCount, isDraggingOver }: DigitalPotProp
         <div className="relative w-[500px] h-[500px]">
           {/* Steam Background */}
           <div className="absolute inset-0 opacity-60 pointer-events-none z-[-1]">
-            <SteamScene />
+            <SteamScene intensity={Math.min(1, ingredientCount / 5)} />
           </div>
           {/* Outer Circle */}
           <motion.div
