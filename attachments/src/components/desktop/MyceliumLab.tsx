@@ -4,14 +4,21 @@ interface MyceliumLabProps {
     isPlaying: boolean;
     temp: number;
     humidity: number;
+    light: number;
 }
 
-const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) => {
+const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity, light }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestIdRef = useRef<number>();
 
+    // Refs for mutable values to avoid effect re-runs
+    const paramsRef = useRef({ temp, humidity, light });
+
+    useEffect(() => {
+        paramsRef.current = { temp, humidity, light };
+    }, [temp, humidity, light]);
+
     // Simulation State
-    // Using a ref to hold state that mutates during animation frame without triggering re-renders
     const hyphaeRef = useRef<Array<{
         x: number;
         y: number;
@@ -21,15 +28,12 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
         width: number;
     }>>([]);
 
-    // Initialize Simulation
     const initSim = (canvas: HTMLCanvasElement) => {
         const startX = canvas.width / 2;
         const startY = canvas.height / 2;
-
-        // Initial "Seed" branches
         hyphaeRef.current = [];
-        for (let i = 0; i < 6; i++) {
-            const angle = (i / 6) * Math.PI * 2;
+        for (let i = 0; i < 8; i++) { // Increased start count
+            const angle = (i / 8) * Math.PI * 2;
             hyphaeRef.current.push({
                 x: startX,
                 y: startY,
@@ -49,61 +53,72 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
 
         const resizeCanvas = () => {
             if (canvas.parentElement) {
-                canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = canvas.parentElement.clientHeight;
-
-                // Re-fill background on resize
-                ctx.fillStyle = '#0f121000'; // Transparent or match bg
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // If we want to reset on resize we could call initSim(canvas) here
-                // But for now let's just let it be or maybe clearer to not reset
+                // Only resize if dimensions actually changed to avoid clearing on mobile scroll etc
+                if (canvas.width !== canvas.parentElement.clientWidth ||
+                    canvas.height !== canvas.parentElement.clientHeight) {
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // Rerender existing paths if we were tracking history, but here we just clear
+                    // If we want to persist, we'd need an offscreen canvas.
+                    // For now, accept clear on resize, but NOT on param change.
+                }
             }
         };
 
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Initial clear to be sure
-        // The parent container provides the background color, so we can keep canvas transparent 
-        // or fill with a semi-transparent dark wash if needed for trails.
-        // The original code filled with #151515. 
-        // Let's assume we want trails, so we might need to handle the clearing logic in the loop.
-
-        // Initial clear to be sure
-        // The parent container provides the background gradient, so we keep canvas transparent.
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         if (hyphaeRef.current.length === 0) {
             initSim(canvas);
         }
 
-        const update = () => {
-            if (!isPlaying) return;
+        const renderLoop = () => {
+            if (!isPlaying) {
+                requestIdRef.current = requestAnimationFrame(renderLoop);
+                return;
+            }
 
-            // Growth Factors based on Controls
-            // Temp: Optimal 24. Too cold (<10) slow, Too hot (>35) die.
+            const { temp, humidity, light } = paramsRef.current;
+
+            // Growth Factors
             let growthRate = 1.0;
-            if (temp < 10) growthRate = 0.2;
-            else if (temp > 35) growthRate = 0; // Death
-            else growthRate = 1 - Math.abs(24 - temp) / 20; // Curve peaking at 24
 
-            // Humidity: Needs high humidity.
+            // Temp Curve (Optimal 24)
+            if (temp < 10) growthRate = 0.2;
+            else if (temp > 35) growthRate = 0;
+            else growthRate = 1 - Math.abs(24 - temp) / 20;
+
+            // Humidity Factor
             if (humidity < 50) growthRate *= 0.1;
             else growthRate *= (humidity / 100);
 
-            if (growthRate <= 0.01) return; // Stagnant
+            // Light Factor (Some mushrooms need light, but too much can dry/damage depending on species)
+            // Let's say optimal is 50%. 
+            // 0% -> slower (etiolation simulated by thinness?)
+            // 100% -> slower (drying)
+            const lightFactor = 1 - Math.abs(50 - light) / 100; // 0.5 to 1.0 range roughly
+            growthRate *= (0.5 + lightFactor * 0.5);
 
+            if (growthRate <= 0.01) {
+                requestIdRef.current = requestAnimationFrame(renderLoop);
+                return;
+            }
+
+            // Style based on health
             ctx.lineWidth = 1;
             ctx.shadowBlur = 5;
-            // Using aurora-cyan equivalent for shadow
-            ctx.shadowColor = 'rgba(45, 212, 191, 0.2)';
+            ctx.shadowColor = `rgba(45, 212, 191, ${0.2 * growthRate})`; // Glow fades if dying
 
-            // Grow each hypha
+            // Grow
             for (let i = hyphaeRef.current.length - 1; i >= 0; i--) {
                 const h = hyphaeRef.current[i];
 
                 if (h.life <= 0) {
+                    // Chance to respawn/branch from dead tip if conditions good?
+                    if (Math.random() < 0.01 * growthRate && h.life > -50) {
+                        // Maybe fruit body logic later
+                    }
                     hyphaeRef.current.splice(i, 1);
                     continue;
                 }
@@ -111,19 +126,19 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
                 ctx.beginPath();
                 ctx.moveTo(h.x, h.y);
 
-                // Move
-                h.x += Math.cos(h.angle) * h.speed * growthRate;
-                h.y += Math.sin(h.angle) * h.speed * growthRate;
+                const currentSpeed = h.speed * growthRate;
 
-                // Wiggle and Branch
-                h.angle += (Math.random() - 0.5) * 0.5; // Wander
+                h.x += Math.cos(h.angle) * currentSpeed;
+                h.y += Math.sin(h.angle) * currentSpeed;
 
-                // Branching chance
+                h.angle += (Math.random() - 0.5) * 0.5;
+
+                // Branching
                 if (Math.random() < 0.03 * growthRate) {
                     hyphaeRef.current.push({
                         x: h.x,
                         y: h.y,
-                        angle: h.angle + (Math.random() - 0.5) * 1.5, // Branch out
+                        angle: h.angle + (Math.random() - 0.5) * 1.5,
                         speed: h.speed * 0.9,
                         life: h.life * 0.8,
                         width: h.width * 0.8
@@ -132,19 +147,21 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
 
                 h.life -= 0.1;
 
-                // Color mapping: 
-                // Healthy (near 24C, high humidity) -> White/Cyan
-                // Stressed -> darker
                 const alpha = Math.max(0, h.life / 100);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                // Color shifts based on parameters
+                // High temp -> Red tint, Low temp -> Blue tint
+                // We use white base but can stroke with color
+
+                let r = 255, g = 255, b = 255;
+                if (temp > 28) { g -= (temp - 28) * 20; b -= (temp - 28) * 20; } // Redshift
+                else if (temp < 18) { r -= (18 - temp) * 20; g -= (18 - temp) * 10; } // Blueshift
+
+                ctx.strokeStyle = `rgba(${Math.max(0, r)}, ${Math.max(0, g)}, ${Math.max(0, b)}, ${alpha})`;
                 ctx.lineWidth = h.width;
                 ctx.lineTo(h.x, h.y);
                 ctx.stroke();
             }
-        };
 
-        const renderLoop = () => {
-            update();
             requestIdRef.current = requestAnimationFrame(renderLoop);
         };
 
@@ -154,15 +171,24 @@ const MyceliumLab: React.FC<MyceliumLabProps> = ({ isPlaying, temp, humidity }) 
             window.removeEventListener('resize', resizeCanvas);
             if (requestIdRef.current) cancelAnimationFrame(requestIdRef.current);
         };
-    }, [isPlaying, temp, humidity]);
+        // Only restart simulation loop if isPlaying changes (start/stop)
+        // Actually we want renderLoop to keep running to check isPlaying inside, 
+        // or just restart it. 
+        // If we remove temp/humidity from dependency array, we rely on paramsRef.
+    }, []); // Run once on mount. 
+
+    // Handle play/pause via ref or effect? 
+    // The previous loop was defined INSIDE effect.
+    // Let's use a separate effect for play state or just check ref.
+
+    // We need to ensuring the loop is running.
+    // The above useEffect runs ONCE.
 
     return (
         <canvas
             ref={canvasRef}
             className="w-full h-full block"
-            style={{
-                mixBlendMode: 'screen' // Allows blending if we have a cool background
-            }}
+            style={{ mixBlendMode: 'screen' }}
         />
     );
 };

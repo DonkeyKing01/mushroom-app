@@ -15,6 +15,7 @@ import NewsPage from "@/pages/desktop/NewsPage";
 import NewsDetailPage from "@/pages/desktop/NewsDetailPage";
 import ProfilePage from "@/pages/desktop/ProfilePage";
 import { AuthProvider } from "@/contexts/authContext";
+import { UserProgressProvider } from "@/contexts/UserProgressContext";
 
 const queryClient = new QueryClient();
 
@@ -23,22 +24,24 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<DiscoveryHome />} />
-              <Route path="/archive" element={<ArchivePage />} />
-              <Route path="/archive/:id" element={<SpeciesDetailPage />} />
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/lab" element={<LabPage />} />
-              <Route path="/recipes" element={<RecipesPage />} />
-              <Route path="/recipes/:id" element={<RecipeDetailPage />} />
-              <Route path="/news" element={<NewsPage />} />
-              <Route path="/news/:id" element={<NewsDetailPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <UserProgressProvider>
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<DiscoveryHome />} />
+                <Route path="/archive" element={<ArchivePage />} />
+                <Route path="/archive/:id" element={<SpeciesDetailPage />} />
+                <Route path="/map" element={<MapPage />} />
+                <Route path="/lab" element={<LabPage />} />
+                <Route path="/recipes" element={<RecipesPage />} />
+                <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/news/:id" element={<NewsDetailPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </UserProgressProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

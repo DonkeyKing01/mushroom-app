@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Plus, Trash2, ChefHat, Sparkles, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -232,6 +232,10 @@ const RecipesPage = () => {
   );
 };
 
+import { createPortal } from "react-dom";
+
+// ... (existing imports preserved in file, we just add createPortal if missing, or let the user do it? I will add it to the top via full file replacement or target replaces. I'll try to use target replaces to be surgically accurate but since I need to change imports too, maybe I should edit imports first.)
+
 interface DraggableSpeciesCardProps {
   species: SpeciesData;
   onDropOnPot: (species: SpeciesData, x: number, y: number) => void;
@@ -240,14 +244,50 @@ interface DraggableSpeciesCardProps {
 
 const DraggableSpeciesCard = ({ species, onDropOnPot, isSelected }: DraggableSpeciesCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragState, setDragState] = useState({ x: 0, y: 0, opacity: 1, rotation: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const bind = useDrag((state) => {
-    setIsDragging(!!state.dragging);
-    if (state.dragging) {
-      setPosition({ x: state.offset[0], y: state.offset[1] });
+    const dragging = !!state.dragging;
+    setIsDragging(dragging);
+
+    if (dragging) {
+      // Calculate opacity based on distance to pot center
+      let opacity = 1;
+      let rotation = 5;
+      const dropX = state.xy[0];
+      const dropY = state.xy[1];
+      const potArea = document.getElementById("digital-pot");
+
+      if (potArea) {
+        const rect = potArea.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const maxDist = rect.width / 2; // Radius approx
+
+        // Calculate distance from pointer to center
+        const dist = Math.sqrt(Math.pow(dropX - centerX, 2) + Math.pow(dropY - centerY, 2));
+
+        // If within vicinity of pot (e.g. 1.5x radius), start fading
+        if (dist < maxDist * 1.5) {
+          // map dist from 1.5*R -> 0 to Opacity 1 -> 0
+          // actually user wants fade as it approaches center. 
+          // Let's say at R (edge) it is 1, at 0 (center) it is 0.
+          if (dist < maxDist) {
+            opacity = Math.max(0, dist / maxDist);
+            rotation = 0 + (dist / maxDist) * 20; // Spin faster closer to center? Or settle?
+          }
+        }
+      }
+
+      setDragState({
+        x: state.xy[0],
+        y: state.xy[1],
+        opacity,
+        rotation
+      });
     } else if (state.tap === false) {
-      // Check if dropped on pot area (center-right region)
+      // Drop Logic
       const dropX = state.xy[0];
       const dropY = state.xy[1];
       const potArea = document.getElementById("digital-pot");
@@ -265,52 +305,60 @@ const DraggableSpeciesCard = ({ species, onDropOnPot, isSelected }: DraggableSpe
           onDropOnPot(species, relativeX, relativeY);
         }
       }
-      setPosition({ x: 0, y: 0 });
     }
   });
 
   return (
-    <motion.div
-      {...(bind() as any)}
-      style={{
-        x: position.x,
-        y: position.y,
-        touchAction: "none",
-      }}
-      className={`flex-shrink-0 w-32 cursor-grab active:cursor-grabbing ${isDragging ? "z-50" : "z-0"
-        }`}
-    >
-      <div className={`transition-all ${isDragging ? "scale-110 rotate-3" : ""}`}>
-        <div className={`aspect-square bg-card grid-line mb-2 overflow-hidden relative group ${isSelected ? "opacity-50" : ""
-          }`}>
+    <>
+      <div
+        ref={cardRef}
+        {...(bind() as any)}
+        className={`flex-shrink-0 w-32 cursor-grab active:cursor-grabbing touch-none ${isSelected ? "opacity-50 grayscale" : ""}`}
+      >
+        <div className="aspect-square bg-card grid-line mb-2 overflow-hidden relative group transition-transform hover:scale-105">
           <img
             src={species.images[0]?.image_url}
             alt={species.name_cn}
-            className={`w-full h-full object-cover transition-all duration-300 ${species.edibility !== "edible" ? "contrast-125" : ""}`}
+            className={`w-full h-full object-cover ${species.edibility !== "edible" ? "contrast-125" : ""}`}
           />
+          {/* Overlays... */}
           {species.edibility !== "edible" ? (
             <div className="absolute inset-0 bg-[hsl(var(--aurora-magenta)/0.2)] backdrop-blur-[2px] flex flex-col items-center justify-center p-2 text-center">
               <AlertTriangle className="w-6 h-6 text-[hsl(var(--aurora-magenta))] mb-1" />
-              <span className="text-[10px] font-bold text-[hsl(var(--aurora-magenta))] uppercase tracking-tighter leading-none">
-                {species.edibility}
-              </span>
-              <span className="text-[8px] text-[hsl(var(--aurora-magenta))/0.8] uppercase mt-1">
-                NOT FOR POT
-              </span>
+              <span className="text-[10px] font-bold text-[hsl(var(--aurora-magenta))] uppercase tracking-tighter leading-none">{species.edibility}</span>
             </div>
-          ) : (
-            !isSelected && (
-              <div className="absolute inset-0 bg-background/0 group-hover:bg-[hsl(var(--aurora-cyan)/0.1)] transition-colors flex items-center justify-center">
-                <Plus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            )
+          ) : !isSelected && (
+            <div className="absolute inset-0 bg-background/0 group-hover:bg-[hsl(var(--aurora-cyan)/0.1)] transition-colors flex items-center justify-center">
+              <Plus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
           )}
         </div>
         <span className="text-meta text-foreground/60 block text-center">
           {species.name_cn}
         </span>
       </div>
-    </motion.div>
+
+      {isDragging && createPortal(
+        <div
+          className="fixed pointer-events-none z-[9999]"
+          style={{
+            left: dragState.x,
+            top: dragState.y,
+            transform: 'translate(-50%, -50%)',
+            opacity: dragState.opacity
+          }}
+        >
+          <div className="w-24 h-24 rounded-full overflow-hidden shadow-2xl border-2 border-[hsl(var(--aurora-cyan))] bg-black">
+            <img
+              src={species.images[0]?.image_url}
+              className="w-full h-full object-cover"
+              alt="dragging"
+            />
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 };
 
@@ -331,22 +379,21 @@ const DigitalPot = ({ ripples, ingredientCount, isDraggingOver }: DigitalPotProp
       >
         {/* Pot Visualization */}
         <div className="relative w-[500px] h-[500px]">
-          {/* Steam Background - Now strictly relative to Pot circle */}
+          {/* Steam Background */}
           <div className="absolute inset-0 opacity-60 pointer-events-none z-[-1]">
             <SteamScene />
           </div>
-          {/* Outer Circle - Pot Rim */}
+          {/* Outer Circle */}
           <motion.div
-            animate={{ scale: isDraggingOver ? 1.05 : 1 }}
+            animate={{ scale: isDraggingOver ? 1.05 : 1, borderColor: isDraggingOver ? 'hsl(var(--aurora-cyan))' : 'rgba(255,255,255,0.2)' }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 rounded-full border-4 border-foreground/20"
+            className="absolute inset-0 rounded-full border-4"
           />
 
-          {/* Inner Circles - Soup Layers */}
+          {/* Soup Layers */}
           <div className="absolute inset-8 rounded-full border-2 border-[hsl(var(--aurora-cyan)/0.2)] animate-pulse" style={{ animationDuration: '3s' }} />
           <div className="absolute inset-16 rounded-full border border-[hsl(var(--aurora-magenta)/0.15)] animate-pulse" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
-
-          {/* Center Glow - Soup */}
+          {/* Center Glow */}
           <div className="absolute inset-20 rounded-full bg-gradient-to-br from-[hsl(var(--aurora-cyan)/0.15)] via-[hsl(var(--aurora-magenta)/0.1)] to-[hsl(var(--aurora-purple)/0.08)] blur-xl" />
 
           {/* Ripple Effects */}
@@ -354,24 +401,24 @@ const DigitalPot = ({ ripples, ingredientCount, isDraggingOver }: DigitalPotProp
             {ripples.map((ripple) => (
               <motion.div
                 key={ripple.id}
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 2, opacity: 0 }}
+                initial={{ scale: 0, opacity: 0.8 }}
+                animate={{ scale: 2.5, opacity: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="absolute rounded-full border-2 border-[hsl(var(--aurora-cyan))]"
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="absolute rounded-full border-2 border-[hsl(var(--aurora-cyan))] bg-[hsl(var(--aurora-cyan)/0.2)]"
                 style={{
                   left: `${(ripple.x + 1) * 50}%`,
                   top: `${(ripple.y + 1) * 50}%`,
-                  width: "100px",
-                  height: "100px",
-                  marginLeft: "-50px",
-                  marginTop: "-50px",
+                  width: "80px",
+                  height: "80px",
+                  marginLeft: "-40px",
+                  marginTop: "-40px",
                 }}
               />
             ))}
           </AnimatePresence>
 
-          {/* Ingredient Count in Center */}
+          {/* Ingredient Count */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center">
               <motion.span
@@ -391,13 +438,9 @@ const DigitalPot = ({ ripples, ingredientCount, isDraggingOver }: DigitalPotProp
 
         {/* Pot Label */}
         <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center">
-          <span className="text-meta text-foreground/40 block">
-            数字汤锅 / DIGITAL POT
-          </span>
+          <span className="text-meta text-foreground/40 block">DIGITAL POT</span>
           <span className="text-meta text-foreground/20 block mt-1">
-            {ingredientCount > 0
-              ? "准备就绪 · 点击生成"
-              : "拖拽食材至此 · DRAG HERE"}
+            {ingredientCount > 0 ? "Ready to Generate" : "Drag Ingredients Here"}
           </span>
         </div>
       </motion.div>

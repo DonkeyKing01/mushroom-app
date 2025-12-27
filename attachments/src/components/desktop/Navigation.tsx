@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { LogIn, UserCircle, LogOut, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/contexts/authContext";
+import { useUserProgress } from "@/contexts/UserProgressContext";
 import AuthModal from "./AuthModal";
 
 
 const AuthSection = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { mycelium } = useUserProgress();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
@@ -26,7 +28,13 @@ const AuthSection = () => {
           />
           <div className="text-left hidden md:block">
             <div className="text-meta text-foreground/60 leading-none mb-1">{user.username}</div>
-            <div className="text-[10px] text-foreground/30 uppercase tracking-wider">Researcher</div>
+            <div className="flex items-center gap-2">
+              <div className="text-[10px] text-foreground/30 uppercase tracking-wider">Researcher</div>
+              <div className="w-1 h-1 rounded-full bg-border" />
+              <div className="text-[10px] text-[hsl(var(--aurora-gold))] font-mono">
+                {mycelium.toLocaleString()} мyc
+              </div>
+            </div>
           </div>
         </button>
 
