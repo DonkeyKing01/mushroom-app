@@ -75,7 +75,7 @@ const CuratedContent = () => {
               <span className="text-label text-foreground/40 italic mb-4">
                 {dailyFungus.nameEn}
               </span>
-              <p className="text-label text-foreground/50 leading-relaxed mb-6">
+              <p className="text-base !normal-case text-foreground/50 leading-relaxed mb-6">
                 {dailyFungus.description}
               </p>
               <div className="mt-auto flex items-center justify-between">
@@ -124,7 +124,7 @@ const CuratedContent = () => {
                   </span>
                   <span className="text-meta text-foreground/30">{alert.time}</span>
                 </div>
-                <p className="text-label text-foreground/60 group-hover:text-foreground transition-colors line-clamp-2">
+                <p className="text-base !normal-case text-foreground/60 group-hover:text-foreground transition-colors line-clamp-2">
                   {alert.content}
                 </p>
               </Link>

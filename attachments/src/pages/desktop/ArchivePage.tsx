@@ -431,7 +431,7 @@ const SpeciesCard = ({ species, index }: SpeciesCardProps) => {
           <span className="text-label text-foreground/40 italic block mb-3">
             {species.name_scientific}
           </span>
-          <p className="text-meta text-foreground/50 line-clamp-2">
+          <p className="text-sm !normal-case text-foreground/50 line-clamp-2">
             {species.description}
           </p>
         </div>
