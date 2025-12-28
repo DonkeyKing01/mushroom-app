@@ -2,7 +2,7 @@
   "name": "vite-react-typescript-starter",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://DonkeyKing01.github.io/Antigravity-mushroomy-Lee",
+  "homepage": "https://DonkeyKing01.github.io/mushroom-app",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { getAssetPath } from "@/utils/assetPath";
 
 interface User {
     id: string;
@@ -35,8 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Mock login - always succeed
         const safeEmail = email || "researcher@myco.network";
         const avatars = [
-            "/images/avatars/mushroom.png",
-            "/images/avatars/beaker.png"
+            getAssetPath("/images/avatars/mushroom.png"),
+            getAssetPath("/images/avatars/beaker.png")
         ];
         const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
 
@@ -60,8 +61,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const safeEmail = email || "researcher@myco.network";
 
         const avatars = [
-            "/images/avatars/mushroom.png",
-            "/images/avatars/beaker.png"
+            getAssetPath("/images/avatars/mushroom.png"),
+            getAssetPath("/images/avatars/beaker.png")
         ];
         const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
 

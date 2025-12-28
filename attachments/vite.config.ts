@@ -5,7 +5,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   // Only use base path for production (GitHub Pages), not for local dev
-  base: mode === 'production' ? '/Antigravity-mushroomy-Lee/' : '/',
+  base: mode === 'production' ? '/mushroom-app/' : '/',
 
   plugins: [react()],
   optimizeDeps: {

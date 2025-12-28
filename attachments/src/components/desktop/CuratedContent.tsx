@@ -3,6 +3,7 @@ import { AlertTriangle, Sparkles, ChevronRight } from "lucide-react";
 import { mockSpeciesData } from "@/data/speciesData";
 import { newsData } from "@/data/newsData";
 import { Link } from "react-router-dom";
+import { getAssetPath } from "@/utils/assetPath";
 
 // Get Daily Specimen (Blue Milk Mushroom / ID 13)
 const dailyFungus = mockSpeciesData.find(s => s.id === "13") || mockSpeciesData[0];
@@ -47,7 +48,7 @@ const CuratedContent = () => {
             {/* Image */}
             <div className="relative aspect-[4/3] overflow-hidden grid-line group">
               <img
-                src={dailyFungus.imageUrl}
+                src={getAssetPath(dailyFungus.imageUrl)}
                 alt={dailyFungus.nameCn}
                 className="absolute inset-0 w-full h-full object-cover grayscale-hover"
               />
