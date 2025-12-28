@@ -59,33 +59,42 @@
 - Smooth, organic transitions using custom easing curves
 - Responsive grid layouts optimized for desktop (1440px+)
 
-## 🚀 Getting Started
+## 🚀 Getting Started | 快速开始
 
-### Prerequisites
+### Prerequisites | 前置要求
 - Node.js 18+ 
 - npm or yarn
 
-### Installation
+### Installation | 安装步骤
+
+> **⚠️ Important | 重要提示**  
+> **English**: The main application is located in the `attachments` directory. Please navigate to this directory to run the full-featured application.  
+> **中文**: 主应用程序位于 `attachments` 目录中。请进入该目录以运行完整功能的应用程序。
 
 ```bash
-# Clone the repository
+# Clone the repository | 克隆仓库
 git clone https://github.com/yourusername/Antigravity-mushroomy.git
 
-# Navigate to project directory
-cd Antigravity-mushroomy
+# Navigate to the attachments directory | 进入 attachments 目录
+cd Antigravity-mushroomy-Lee/attachments
 
-# Install dependencies
+# Install dependencies | 安装依赖
 npm install
 
-# Start development server
+# Start development server | 启动开发服务器
 npm run dev
 
-# Build for production
+# Build for production | 构建生产版本
 npm run build
 ```
 
-### Development Server
-The app will be available at `http://localhost:5173`
+### Development Server | 开发服务器
+**English**: The app will be available at `http://localhost:5173`  
+**中文**: 应用程序将在 `http://localhost:5173` 上运行
+
+### Configuration | 配置说明
+**English**: Before running the application, you may need to configure environment variables. See `attachments/.env.template` for reference and create your own `attachments/.env` file.  
+**中文**: 运行应用程序前，您可能需要配置环境变量。请参考 `attachments/.env.template` 并创建您自己的 `attachments/.env` 文件。
 
 ## 📁 Project Structure
 
