@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 // import { supabase } from "@/integrations/supabase/client";
 import { mockSpeciesData, Species } from "@/data/speciesData";
+import { getAssetPath } from "@/utils/assetPath";
 
 export interface SpeciesData {
   id: string;
@@ -45,6 +46,14 @@ export interface SpeciesData {
   } | null;
 }
 
+// Helper to transform image URLs - only transform local paths, not external URLs
+const transformImageUrl = (url: string): string => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url; // External URL, don't modify
+  }
+  return getAssetPath(url);
+};
+
 // Transform mock data to match Supabase format
 const transformMockData = (species: Species): SpeciesData => ({
   id: species.id,
@@ -63,13 +72,13 @@ const transformMockData = (species: Species): SpeciesData => ({
   cap_shape: species.capShape,
   odor: species.odor,
   spore_color: species.sporeColor,
-  images: [{ image_url: species.imageUrl }],
+  images: [{ image_url: transformImageUrl(species.imageUrl) }],
   similar_species: (species.similarSpecies || []).map((sim) => ({
     similar_species_id: sim.id,
     warning: sim.warning,
     similar_species: {
       name_cn: sim.name,
-      images: [{ image_url: sim.imageUrl }],
+      images: [{ image_url: transformImageUrl(sim.imageUrl) }],
     },
   })),
   anatomy_data: species.anatomy ? {

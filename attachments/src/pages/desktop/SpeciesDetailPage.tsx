@@ -13,6 +13,7 @@ import Navigation from "@/components/desktop/Navigation";
 import Footer from "@/components/desktop/Footer";
 import MushroomModel3D from "@/components/desktop/MushroomModel3D";
 import { useSpeciesDetail } from "@/hooks/useSpecies";
+import { getAssetPath } from "@/utils/assetPath";
 
 const SpeciesDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,11 +49,12 @@ const SpeciesDetailPage = () => {
   // Model files are named in Chinese, but species.name_cn uses English names
   const getModelPath = (speciesNameCn: string): string | undefined => {
     const modelMap: Record<string, string> = {
-      "Fly Agaric": "/models/毒蝇伞.glb",      // Amanita muscaria
-      "Morel": "/models/羊肚菌.glb",            // Morchella
-      "Chanterelle": "/models/鸡油菌.glb",      // Cantharellus cibarius
+      "Fly Agaric": "models/毒蝇伞.glb",      // Amanita muscaria
+      "Morel": "models/羊肚菌.glb",            // Morchella
+      "Chanterelle": "models/鸡油菌.glb",      // Cantharellus cibarius
     };
-    return modelMap[speciesNameCn];
+    const relativePath = modelMap[speciesNameCn];
+    return relativePath ? getAssetPath(relativePath) : undefined;
   };
 
   const modelPath = getModelPath(species.name_cn);
