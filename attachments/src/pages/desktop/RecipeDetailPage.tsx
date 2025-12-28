@@ -15,16 +15,17 @@ import {
 } from "lucide-react";
 import Navigation from "@/components/desktop/Navigation";
 import Footer from "@/components/desktop/Footer";
+import { getAssetPath } from "@/utils/assetPath";
 
 // Helper to get ingredient icons
 const getIngredientIcon = (name: string) => {
   const lower = name.toLowerCase();
   let imgSrc = "";
-  if (lower.includes("matsutake")) imgSrc = "/images/recipes/matsutake-soup/matsutake.png";
-  else if (lower.includes("chanterelle")) imgSrc = "/images/recipes/matsutake-soup/chanterelle.png";
-  else if (lower.includes("hen") || lower.includes("chicken")) imgSrc = "/images/recipes/matsutake-soup/hen.png";
-  else if (lower.includes("ginger")) imgSrc = "/images/recipes/matsutake-soup/ginger.png";
-  else if (lower.includes("water")) imgSrc = "/images/recipes/matsutake-soup/water.png";
+  if (lower.includes("matsutake")) imgSrc = getAssetPath("images/recipes/matsutake-soup/matsutake.png");
+  else if (lower.includes("chanterelle")) imgSrc = getAssetPath("images/recipes/matsutake-soup/chanterelle.png");
+  else if (lower.includes("hen") || lower.includes("chicken")) imgSrc = getAssetPath("images/recipes/matsutake-soup/hen.png");
+  else if (lower.includes("ginger")) imgSrc = getAssetPath("images/recipes/matsutake-soup/ginger.png");
+  else if (lower.includes("water")) imgSrc = getAssetPath("images/recipes/matsutake-soup/water.png");
 
   if (imgSrc) {
     return (
@@ -42,7 +43,7 @@ const getStepIllustration = (stepNumber: number) => {
   return (
     <div className="w-full aspect-video bg-black/20 rounded-lg mb-6 overflow-hidden border border-border/50 shadow-lg">
       <img
-        src={`/images/recipes/matsutake-soup/step_${stepNumber}.png`}
+        src={getAssetPath(`images/recipes/matsutake-soup/step_${stepNumber}.png`)}
         alt={`Step ${stepNumber}`}
         className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
       />
