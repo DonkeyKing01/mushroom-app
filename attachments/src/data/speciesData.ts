@@ -114,12 +114,18 @@ export const mockSpeciesData: Species[] = [
     capShape: "Hemispherical to Flat",
     odor: "Strong Pine Scent",
     sporeColor: "White",
+    anatomy: {
+      sporePrint: "White",
+      ringType: "Membranous Ring",
+      gillAttachment: "Adnexed"
+    },
     ecology: {
       relationship: "Ectomycorrhizal",
       hostTrees: ["Red Pine", "Hemlock", "Spruce"]
     },
     cookingNotes: {
-      method: "Sashimi, Charcoal Grilled, Soup"
+      method: "Sashimi, Charcoal Grilled, Soup",
+      warning: "Best consumed fresh. Drying may diminish its unique aroma."
     }
   },
   {
@@ -149,6 +155,10 @@ export const mockSpeciesData: Species[] = [
       ringType: "Membranous Ring",
       gillAttachment: "Free"
     },
+    ecology: {
+      relationship: "Ectomycorrhizal",
+      hostTrees: ["Birch", "Pine", "Spruce", "Fir"]
+    },
     cookingNotes: {
       method: "Do Not Eat",
       warning: "⚠️ Contains ibotenic acid and muscimol, can cause hallucinations, vomiting, and nervous system damage."
@@ -168,6 +178,11 @@ export const mockSpeciesData: Species[] = [
     capShape: "Honeycomb",
     odor: "Pleasant",
     sporeColor: "Pale Yellow",
+    anatomy: {
+      sporePrint: "Pale Yellow to Cream",
+      ringType: "No Ring",
+      gillAttachment: "Honeycomb ridges (no true gills)"
+    },
     ecology: {
       relationship: "Saprophytic",
       hostTrees: ["Various Broad-leaved Trees"]
@@ -191,6 +206,10 @@ export const mockSpeciesData: Species[] = [
     capShape: "Fan to Kidney Shaped",
     odor: "Slightly Bitter",
     sporeColor: "Brown",
+    anatomy: {
+      sporePrint: "Brown",
+      gillAttachment: "Pores (polypore)"
+    },
     ecology: {
       relationship: "Wood-decaying",
       hostTrees: ["Oak", "Birch", "Willow"]
@@ -226,6 +245,10 @@ export const mockSpeciesData: Species[] = [
       ringType: "Membranous Ring",
       gillAttachment: "Free"
     },
+    ecology: {
+      relationship: "Ectomycorrhizal",
+      hostTrees: ["Oak", "Beech", "Chestnut", "Hazel"]
+    },
     cookingNotes: {
       method: "Do Not Eat",
       warning: "⚠️ Deadly Toxic! Contains alpha-amanitin, extremely high mortality rate, no specific antidote."
@@ -245,9 +268,17 @@ export const mockSpeciesData: Species[] = [
     capShape: "Fan to Kidney Shaped",
     odor: "Mild",
     sporeColor: "White",
+    anatomy: {
+      sporePrint: "White",
+      gillAttachment: "Pores (polypore)"
+    },
     ecology: {
       relationship: "Saprophytic",
       hostTrees: ["Oak", "Beech", "Maple"]
+    },
+    cookingNotes: {
+      method: "Tea, Decoction, Extract",
+      warning: "Too tough to eat directly. Best used for medicinal teas and extracts."
     }
   },
   {
@@ -264,6 +295,15 @@ export const mockSpeciesData: Species[] = [
     capShape: "Hemispherical to Flat",
     odor: "Nutty",
     sporeColor: "Olive Brown",
+    anatomy: {
+      sporePrint: "Olive Brown",
+      ringType: "No Ring",
+      gillAttachment: "Pores (bolete)"
+    },
+    ecology: {
+      relationship: "Ectomycorrhizal",
+      hostTrees: ["Spruce", "Pine", "Chestnut", "Beech"]
+    },
     cookingNotes: {
       method: "Grilled, Risotto, Dried"
     }
@@ -282,6 +322,14 @@ export const mockSpeciesData: Species[] = [
     capShape: "Fan to Kidney Shaped",
     odor: "Anise-like",
     sporeColor: "White to Lilac Gray",
+    anatomy: {
+      sporePrint: "White to Lilac Gray",
+      gillAttachment: "Decurrent"
+    },
+    ecology: {
+      relationship: "Saprophytic",
+      hostTrees: ["Beech", "Aspen", "Oak", "Various Hardwoods"]
+    },
     cookingNotes: {
       method: "Sautéed, Stir-fry"
     }
@@ -300,7 +348,19 @@ export const mockSpeciesData: Species[] = [
     capShape: "Funnel-shaped",
     odor: "Mild",
     sporeColor: "Cream",
-    colorChange: "Exudes blue milk when cut"
+    colorChange: "Exudes blue milk when cut",
+    anatomy: {
+      sporePrint: "Cream to Pale Yellow",
+      gillAttachment: "Adnate to Slightly Decurrent"
+    },
+    ecology: {
+      relationship: "Ectomycorrhizal",
+      hostTrees: ["Pine", "Oak"]
+    },
+    cookingNotes: {
+      method: "Grilled, Sautéed",
+      warning: "The blue color fades when cooked."
+    }
   },
   {
     id: "14",
@@ -316,7 +376,19 @@ export const mockSpeciesData: Species[] = [
     capShape: "Fan to Kidney Shaped",
     odor: "Mild",
     sporeColor: "White",
-    colorChange: "Bioluminescent (Glows in dark)"
+    colorChange: "Bioluminescent (Glows in dark)",
+    anatomy: {
+      sporePrint: "White to Cream",
+      gillAttachment: "Decurrent"
+    },
+    ecology: {
+      relationship: "Saprophytic",
+      hostTrees: ["Eucalyptus", "Various Dead Hardwoods"]
+    },
+    cookingNotes: {
+      method: "Do Not Eat",
+      warning: "⚠️ Highly toxic! Causes severe cramps, vomiting, and diarrhea. Often confused with oyster mushrooms."
+    }
   },
   {
     id: "15",
@@ -332,7 +404,19 @@ export const mockSpeciesData: Species[] = [
     capShape: "Fan to Kidney Shaped",
     odor: "Mild",
     sporeColor: "White",
-    colorChange: "Bioluminescent (Glows in dark)"
+    colorChange: "Bioluminescent (Glows in dark)",
+    anatomy: {
+      sporePrint: "White to Cream",
+      gillAttachment: "Decurrent"
+    },
+    ecology: {
+      relationship: "Saprophytic",
+      hostTrees: ["Eucalyptus", "Various Dead Hardwoods"]
+    },
+    cookingNotes: {
+      method: "Do Not Eat",
+      warning: "⚠️ Highly toxic! Causes severe cramps, vomiting, and diarrhea. Often confused with oyster mushrooms."
+    }
   },
   {
     id: "16",
@@ -348,8 +432,17 @@ export const mockSpeciesData: Species[] = [
     capShape: "Cushion-like with Hanging Spines",
     odor: "Mild, Seafood-like",
     sporeColor: "White",
+    anatomy: {
+      sporePrint: "White",
+      gillAttachment: "Spines (no gills)"
+    },
+    ecology: {
+      relationship: "Saprophytic/Parasitic",
+      hostTrees: ["Oak", "Beech", "Maple", "Walnut"]
+    },
     cookingNotes: {
-      method: "Pan-fried, Seared"
+      method: "Pan-fried, Seared",
+      warning: "Known for potential cognitive and nerve health benefits."
     }
   }
 ];

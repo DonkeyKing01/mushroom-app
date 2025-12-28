@@ -1,7 +1,7 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import NotFound from "@/pages/NotFound";
 import DiscoveryHome from "@/pages/desktop/DiscoveryHome";
@@ -27,7 +27,7 @@ const App = () => (
         <AuthProvider>
           <UserProgressProvider>
             <Sonner />
-            <BrowserRouter>
+            <HashRouter>
               <Routes>
                 <Route path="/" element={<DiscoveryHome />} />
                 <Route path="/archive" element={<ArchivePage />} />
@@ -42,7 +42,7 @@ const App = () => (
                 <Route path="/upload/:sessionId" element={<MobileUploadPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
+            </HashRouter>
           </UserProgressProvider>
         </AuthProvider>
       </TooltipProvider>

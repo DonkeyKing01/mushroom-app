@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // Only use base path for production (GitHub Pages), not for local dev
+  base: mode === 'production' ? '/Antigravity-mushroomy-Lee/' : '/',
+
   plugins: [react()],
   optimizeDeps: {
     include: ["lucide-react", "framer-motion", "recharts"],
@@ -47,4 +50,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

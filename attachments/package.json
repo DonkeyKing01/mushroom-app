@@ -2,13 +2,16 @@
   "name": "vite-react-typescript-starter",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://DonkeyKing01.github.io/Antigravity-mushroomy-Lee",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:server": "node server.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
@@ -83,6 +86,7 @@
     "@types/three": "^0.165.0",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.19",
+    "gh-pages": "^6.3.0",
     "konva": "^9.2.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",

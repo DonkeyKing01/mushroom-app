@@ -7,11 +7,11 @@ import {
   AlertTriangle,
   Flame,
   Network,
-  RotateCcw,
   Loader2,
 } from "lucide-react";
 import Navigation from "@/components/desktop/Navigation";
 import Footer from "@/components/desktop/Footer";
+import MushroomModel3D from "@/components/desktop/MushroomModel3D";
 import { useSpeciesDetail } from "@/hooks/useSpecies";
 
 const SpeciesDetailPage = () => {
@@ -43,6 +43,19 @@ const SpeciesDetailPage = () => {
   };
 
   const config = (edibilityConfig as any)[species.edibility] || edibilityConfig.unknown;
+
+  // Map species to 3D model files
+  // Model files are named in Chinese, but species.name_cn uses English names
+  const getModelPath = (speciesNameCn: string): string | undefined => {
+    const modelMap: Record<string, string> = {
+      "Fly Agaric": "/models/毒蝇伞.glb",      // Amanita muscaria
+      "Morel": "/models/羊肚菌.glb",            // Morchella
+      "Chanterelle": "/models/鸡油菌.glb",      // Cantharellus cibarius
+    };
+    return modelMap[speciesNameCn];
+  };
+
+  const modelPath = getModelPath(species.name_cn);
 
   // Get all images
   const images = species.images?.map((img: { image_url: string }) => img.image_url) || [
@@ -281,23 +294,8 @@ const SpeciesDetailPage = () => {
                     INTERACTIVE ANATOMY
                   </h2>
 
-                  {/* 3D Model Placeholder */}
-                  <div className="relative aspect-video bg-card grid-line flex items-center justify-center aurora-animated">
-                    <div className="text-center">
-                      <RotateCcw className="w-12 h-12 text-foreground/10 mx-auto mb-4 animate-spin" style={{ animationDuration: "3s" }} />
-                      <span className="text-meta text-foreground/30 block">
-                        3D Model Loading
-                      </span>
-                      <span className="text-meta text-foreground/20 block mt-1">
-                        Rotate to view gill attachments and stalk texture
-                      </span>
-                    </div>
-
-                    {/* Control Hints */}
-                    <div className="absolute bottom-4 left-4 text-meta text-foreground/30">
-                      Drag to rotate · Scroll to zoom
-                    </div>
-                  </div>
+                  {/* 3D Model Viewer */}
+                  <MushroomModel3D modelPath={modelPath} />
                 </motion.div>
               </div>
 
