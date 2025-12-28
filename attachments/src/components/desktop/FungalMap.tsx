@@ -400,7 +400,7 @@ const FungalMap: React.FC<FungalMapProps> = ({
                         backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        filter: 'invert(1) sepia(1) saturate(3) hue-rotate(100deg) brightness(0.7) drop-shadow(0 0 2px rgba(45, 212, 191, 0.5))'
+                        filter: 'invert(1) grayscale(0.8) brightness(0.8) contrast(1.1)'
                     }}
                 />
             </div>
