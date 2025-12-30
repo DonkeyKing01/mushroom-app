@@ -67,16 +67,10 @@
 
 ### Installation | 安装步骤
 
-> **⚠️ Important | 重要提示**  
-> **English**: The main application is located in the `attachments` directory. Please navigate to this directory to run the full-featured application.  
-> **中文**: 主应用程序位于 `attachments` 目录中。请进入该目录以运行完整功能的应用程序。
-
 ```bash
 # Clone the repository | 克隆仓库
-git clone https://github.com/yourusername/Antigravity-mushroomy.git
-
-# Navigate to the attachments directory | 进入 attachments 目录
-cd Antigravity-mushroomy-Lee/attachments
+git clone https://github.com/DonkeyKing01/mushroom-app.git
+cd mushroom-app
 
 # Install dependencies | 安装依赖
 npm install
@@ -86,6 +80,9 @@ npm run dev
 
 # Build for production | 构建生产版本
 npm run build
+
+# Deploy to GitHub Pages | 部署到 GitHub Pages
+npm run deploy
 ```
 
 ### Development Server | 开发服务器
@@ -93,28 +90,29 @@ npm run build
 **中文**: 应用程序将在 `http://localhost:5173` 上运行
 
 ### Configuration | 配置说明
-**English**: Before running the application, you may need to configure environment variables. See `attachments/.env.template` for reference and create your own `attachments/.env` file.  
-**中文**: 运行应用程序前，您可能需要配置环境变量。请参考 `attachments/.env.template` 并创建您自己的 `attachments/.env` 文件。
+**English**: Before running the application, you may need to configure environment variables. See `.env.template` for reference and create your own `.env` file.  
+**中文**: 运行应用程序前，您可能需要配置环境变量。请参考 `.env.template` 并创建您自己的 `.env` 文件。
 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/          # Reusable UI components
-│   ├── Navigation.jsx   # Bottom nav bar
-│   ├── SpeciesCard.jsx  # Archive card with effects
-│   ├── FungalMap.jsx    # Canvas-based map
-│   └── MyceliumLab.jsx  # Growth simulation
-├── pages/              # Route pages
-│   ├── DiscoveryHome.jsx
-│   ├── Archive.jsx
-│   ├── MapCommunity.jsx
-│   ├── InteractiveLab.jsx
-│   └── Recipes.jsx
-├── utils/
-│   └── mockData.js     # Species database
-└── styles/
-    └── globals.css     # Design system tokens
+├── src/
+│   ├── components/      # React 组件
+│   │   ├── desktop/     # 桌面端组件
+│   │   └── ui/          # shadcn/ui 组件库
+│   ├── pages/           # 页面路由
+│   │   └── desktop/     # 桌面端页面
+│   ├── contexts/        # React Context
+│   ├── hooks/           # 自定义 Hooks
+│   ├── data/            # 数据文件
+│   ├── lib/             # 工具库
+│   └── integrations/    # 第三方集成 (Supabase)
+├── public/              # 静态资源
+├── images/              # 图片资源
+├── supabase/            # Supabase 配置
+├── vite.config.ts       # Vite 配置
+├── tailwind.config.js   # Tailwind 配置
+└── package.json         # 项目依赖
 ```
 
 ## 🎯 Key Interactions
