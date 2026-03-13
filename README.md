@@ -60,6 +60,7 @@
 - Responsive grid layouts optimized for desktop (1440px+)
 
 ## 🚀 Getting Started | 快速开始
+体验版本：https://donkeyking01.github.io/mushroom-app/
 
 ### Prerequisites | 前置要求
 - Node.js 18+ 
