@@ -4,8 +4,9 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Only use base path for production (GitHub Pages), not for local dev
-  base: mode === 'production' ? '/mushroom-app/' : '/',
+  // Netlify serves this app from the site root, so production assets
+  // must be emitted with root-relative URLs instead of a repo subpath.
+  base: '/',
 
   plugins: [react()],
   optimizeDeps: {

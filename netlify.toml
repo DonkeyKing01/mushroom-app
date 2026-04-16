@@ -1,0 +1,3 @@
+[build]
+  command = "corepack pnpm build"
+  publish = "dist"
